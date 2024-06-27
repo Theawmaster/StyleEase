@@ -1,18 +1,60 @@
 import * as React from "react";
+import { useState } from "react";
 import {
   Text,
   StyleSheet,
   View,
   Pressable,
   TouchableHighlight,
+  TouchableOpacity,
 } from "react-native";
 import { Image } from "expo-image";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation, ParamListBase } from "@react-navigation/native";
+import { useNavigation, ParamListBase, useRoute, RouteProp } from "@react-navigation/native";
 import { FontFamily, Border, Color, FontSize, Padding } from "../GlobalStyles";
+
+type RouteParams = {
+  topHairStyle: string;
+  topHairVolume: string;
+  sideHairStyle: string;
+  backHairStyle: string;
+};
 
 const Confirmation = () => {
   const navigation = useNavigation<StackNavigationProp<ParamListBase>>();
+  const route = useRoute<RouteProp<{ params: RouteParams }, 'params'>>();
+  const { topHairStyle, topHairVolume, sideHairStyle, backHairStyle } = route.params;
+  const [warningMessage, setWarningMessage] = useState<string>("");
+
+  const [selectedStylist, setSelectedStylist] = useState<string | null>(null);
+  const [waitingTime, setWaitingTime] = useState<string>("");
+
+  const handleStylistSelection = (stylist: string) => {
+    setSelectedStylist(stylist);
+    setWarningMessage("");
+    switch (stylist) {
+      case 'Tommy Tan':
+        setWaitingTime("~ 10 minutes (serving 1 customer)");
+        break;
+      case 'Kris Chan':
+        setWaitingTime("~ 25 minutes (serving 2 customer)");
+        break;
+      case 'Mabel Lee':
+        setWaitingTime("~ 45 minutes (out of shop)");
+        break;
+      default:
+        setWaitingTime("");
+    }
+  };
+
+  const handleConfirmBooking = () => {
+    if (!selectedStylist) {
+      setWarningMessage("Please select a stylist before proceeding.");
+      return;
+    }
+    // Navigate to the Payment screen or any other action
+    navigation.navigate("Payment", {topHairStyle, topHairVolume, sideHairStyle, backHairStyle, selectedStylist});
+  };
 
   return (
     <View style={styles.confirmation}>
@@ -22,65 +64,66 @@ const Confirmation = () => {
             Choose Stylist
           </Text>
           <View style={styles.horizontalOption}>
-            <View style={styles.option}>
+        <TouchableOpacity onPress={() => handleStylistSelection("Tommy Tan")}>
+          <View style={styles.option1}>
+            <Image
+              style={styles.photoIconLayout}
+              contentFit="cover"
+              source={require("../assets/photo-profile.png")}
+            />
+            <View style={styles.rating1}>
               <Image
-                style={[styles.photoProfileIcon, styles.photoIconLayout]}
+                style={[styles.boldLikeStar, styles.boldLikeStarLayout]}
                 contentFit="cover"
-                source={require("../assets/photo-profile.png")}
+                source={require("../assets/bold--like--star.png")}
               />
-              <View style={styles.rating}>
-                <Image
-                  style={[styles.boldLikeStar, styles.boldLikeStarLayout]}
-                  contentFit="cover"
-                  source={require("../assets/bold--like--star.png")}
-                />
-                <Text style={styles.text}>5.0</Text>
-              </View>
-              <Text style={[styles.tommyTan, styles.tommyTanTypo]}>
-                Tommy Tan
-              </Text>
-              <Image
-                style={styles.vectorIcon}
-                contentFit="cover"
-                source={require("../assets/vector.png")}
-              />
+              <Text style={styles.text}>4.8</Text>
             </View>
-            <View style={styles.option1}>
-              <Image
-                style={styles.photoIconLayout}
-                contentFit="cover"
-                source={require("../assets/photo-profile1.png")}
-              />
-              <View style={styles.rating1}>
+            <Text style={[styles.tommyTan, styles.tommyTanTypo]}>
+              Tommy Tan {selectedStylist === "Tommy Tan" && "✓"}
+            </Text>
+          </View>
+        </TouchableOpacity>
+         <TouchableOpacity onPress={() => handleStylistSelection("Kris Chan")}>
+              <View style={[styles.option1, styles.optionSpacing]}>
                 <Image
-                  style={[styles.boldLikeStar, styles.boldLikeStarLayout]}
+                  style={styles.photoIconLayout}
                   contentFit="cover"
-                  source={require("../assets/bold--like--star.png")}
+                  source={require("../assets/photo-profile1.png")}
                 />
-                <Text style={styles.text}>4.8</Text>
+                <View style={styles.rating1}>
+                  <Image
+                    style={[styles.boldLikeStar, styles.boldLikeStarLayout]}
+                    contentFit="cover"
+                    source={require("../assets/bold--like--star.png")}
+                  />
+                  <Text style={styles.text}>4.8</Text>
+                </View>
+                <Text style={[styles.krisChan, styles.tommyTanTypo]}>
+                  Kris Chan {selectedStylist === "Kris Chan" && "✓"}
+                </Text>
               </View>
-              <Text style={[styles.krisChan, styles.tommyTanTypo]}>
-                Kris Chan
-              </Text>
-            </View>
-            <View style={styles.option1}>
-              <Image
-                style={styles.photoIconLayout}
-                contentFit="cover"
-                source={require("../assets/photo-profile2.png")}
-              />
-              <View style={styles.rating1}>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => handleStylistSelection("Mabel Lee")}>
+              <View style={[styles.option1, styles.optionSpacing]}>
                 <Image
-                  style={[styles.boldLikeStar, styles.boldLikeStarLayout]}
+                  style={styles.photoIconLayout}
                   contentFit="cover"
-                  source={require("../assets/bold--like--star1.png")}
+                  source={require("../assets/photo-profile2.png")}
                 />
-                <Text style={styles.text}>4.9</Text>
+                <View style={styles.rating1}>
+                  <Image
+                    style={[styles.boldLikeStar, styles.boldLikeStarLayout]}
+                    contentFit="cover"
+                    source={require("../assets/bold--like--star1.png")}
+                  />
+                  <Text style={styles.text}>4.9</Text>
+                </View>
+                <Text style={[styles.krisChan, styles.tommyTanTypo]}>
+                  Mabel Lee {selectedStylist === "Mabel Lee" && "✓"}
+                </Text>
               </View>
-              <Text style={[styles.krisChan, styles.tommyTanTypo]}>
-                Mabel Lee
-              </Text>
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
         <View>
@@ -90,7 +133,7 @@ const Confirmation = () => {
           <View style={styles.listTime}>
             <View style={styles.tab}>
               <Text style={[styles.minutesServing1, styles.tommyTanTypo]}>
-                ~ 10 minutes (serving 1 customer)
+                {waitingTime}
               </Text>
             </View>
           </View>
@@ -103,8 +146,8 @@ const Confirmation = () => {
             <View style={styles.list}>
               <Text
                 style={[styles.hairTrimmingMiddle, styles.tommyTanTypo]}
-              >{`Hair trimming (Middle part, high and 
-slope)`}</Text>
+              >{`Hair trimming (${topHairStyle}, ${topHairVolume}, 
+${sideHairStyle}, ${backHairStyle})`}</Text>
               <Text style={[styles.hairTrimmingMiddle, styles.tommyTanTypo]}>
                 $10.00
               </Text>
@@ -165,12 +208,12 @@ slope)`}</Text>
               onPress={() => navigation.goBack()}
             >
               <Image
-                style={styles.icon}
+                style={[styles.icon, {marginTop: 25}]}
                 contentFit="cover"
                 source={require("../assets/linear--arrows--arrow-left.png")}
               />
             </Pressable>
-            <Text style={[styles.label1, styles.text4Typo]}>Back</Text>
+            <Text style={[styles.label1, styles.text4Typo, {marginTop: 48}]}>Back</Text>
           </View>
           <View style={styles.statusBarFlexBox}>
             <Image
@@ -186,11 +229,12 @@ slope)`}</Text>
           </View>
         </View>
       </View>
+      {warningMessage ? <Text style={styles.warning}>{warningMessage}</Text> : null}
       <TouchableHighlight
         style={styles.buttonbig}
         underlayColor="#fff"
         activeOpacity={0.2}
-        onPress={() => navigation.navigate("Payment")}
+        onPress={handleConfirmBooking}
       >
         <>
           <Text style={[styles.confirmBooking, styles.text4Typo]}>
@@ -208,6 +252,14 @@ slope)`}</Text>
 };
 
 const styles = StyleSheet.create({
+  warning: {
+    color: 'red',
+    marginTop: 280,
+    textAlign: 'center',
+  },
+  optionSpacing: {
+    marginHorizontal: 10,
+  },
   text4Typo: {
     fontFamily: FontFamily.typographyHeadline416,
     fontWeight: "700",
@@ -224,6 +276,10 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.typographySubHeadline216,
     fontWeight: "500",
     textAlign: "left",
+  },
+  checkmark: {
+    color: Color.colorLightseagreen_100,
+    marginLeft: 8,
   },
   list1SpaceBlock: {
     marginTop: 18,

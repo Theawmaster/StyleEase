@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -9,11 +10,46 @@ import {
 } from "react-native";
 import { Image } from "expo-image";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation, ParamListBase } from "@react-navigation/native";
+import { useNavigation, ParamListBase, useRoute, RouteProp} from "@react-navigation/native";
 import { Color, FontFamily, FontSize, Padding, Border } from "../GlobalStyles";
+
+type RouteParams = {
+  topHairStyle: string;
+  topHairVolume: string;
+  sideHairStyle: string;
+  backHairStyle: string;
+  selectedStylist: string;
+};
 
 const BookingAndRatingPage = () => {
   const navigation = useNavigation<StackNavigationProp<ParamListBase>>();
+  const [rating, setRating] = useState(4);
+  const [selectedTags, setSelectedTags] = useState(["Overall good", "Good service"]);
+  const route = useRoute<RouteProp<{ params: RouteParams }, 'params'>>();
+  const { topHairStyle, topHairVolume, sideHairStyle, backHairStyle, selectedStylist } = route.params;
+
+  const tags = [
+    "Overall good",
+    "Good service",
+    "Satisfying",
+    "Comfortable",
+    "Recommended",
+    "Cheap",
+    "Perfect results",
+    "Accurate estimate",
+  ];
+
+  const handleStarPress = (value: number) => {
+    setRating(value);
+  };
+
+  const handleTagPress = (tag: string) => {
+    if (selectedTags.includes(tag)) {
+      setSelectedTags(selectedTags.filter((t) => t !== tag));
+    } else {
+      setSelectedTags([...selectedTags, tag]);
+    }
+  };
 
   return (
     <ScrollView
@@ -34,142 +70,79 @@ const BookingAndRatingPage = () => {
             <View style={styles.sectionRating}>
               <Text style={[styles.rating, styles.textTypo]}>Rating</Text>
               <View style={styles.rating1}>
-                <Image
-                  style={styles.iconLayout}
-                  contentFit="cover"
-                  source={require("../assets/star-1.png")}
-                />
-                <Image
-                  style={[styles.star2Icon, styles.iconLayout]}
-                  contentFit="cover"
-                  source={require("../assets/star-1.png")}
-                />
-                <Image
-                  style={[styles.star2Icon, styles.iconLayout]}
-                  contentFit="cover"
-                  source={require("../assets/star-1.png")}
-                />
-                <Image
-                  style={[styles.star2Icon, styles.iconLayout]}
-                  contentFit="cover"
-                  source={require("../assets/star-1.png")}
-                />
-                <Image
-                  style={[styles.star2Icon, styles.iconLayout]}
-                  contentFit="cover"
-                  source={require("../assets/star-5.png")}
-                />
-                <Text style={[styles.text, styles.textTypo]}>(4.0)</Text>
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Pressable key={star} onPress={() => handleStarPress(star)}>
+                    <Image
+                      style={[styles.star2Icon, styles.iconLayout]}
+                      contentFit="cover"
+                      source={
+                        star <= rating
+                          ? require("../assets/star-1.png")
+                          : require("../assets/star-5.png")
+                      }
+                    />
+                  </Pressable>
+                ))}
+                <Text style={[styles.text, styles.textTypo]}>({rating}.0)</Text>
               </View>
             </View>
             <View style={styles.textArea}>
               <Text style={[styles.rating, styles.textTypo]}>Review</Text>
               <View style={[styles.textArea1, styles.textArea1Layout]}>
-                <View style={[styles.overallGoodTag, styles.tabFlexBox]}>
-                  <Text style={[styles.overallGood, styles.satisfyingTypo]}>
-                    Overall good
-                  </Text>
-                  <Image
-                    style={styles.materialSymbolsLightcancelIcon}
-                    contentFit="cover"
-                    source={require("../assets/materialsymbolslightcancel.png")}
-                  />
-                </View>
-                <View style={[styles.overallGoodTag, styles.tabFlexBox]}>
-                  <Text style={[styles.overallGood, styles.satisfyingTypo]}>
-                    Good service
-                  </Text>
-                  <Image
-                    style={styles.materialSymbolsLightcancelIcon}
-                    contentFit="cover"
-                    source={require("../assets/materialsymbolslightcancel.png")}
-                  />
-                </View>
+                {selectedTags.map((tag) => (
+                  <Pressable
+                    key={tag}
+                    style={[styles.overallGoodTag, styles.tabFlexBox]}
+                    onPress={() => handleTagPress(tag)}
+                  >
+                    <Text style={[styles.overallGood, styles.satisfyingTypo]}>
+                      {tag}
+                    </Text>
+                    <Image
+                      style={styles.materialSymbolsLightcancelIcon}
+                      contentFit="cover"
+                      source={require("../assets/materialsymbolslightcancel.png")}
+                    />
+                  </Pressable>
+                ))}
               </View>
               <Text style={[styles.hintMessageGoes, styles.satisfyingTypo]}>
                 Hint message goes here
               </Text>
             </View>
             <View style={[styles.sectionTab, styles.textArea1Layout]}>
-              <View style={[styles.tab, styles.tabBorder]}>
-                <Text style={[styles.overallGood, styles.satisfyingTypo]}>
-                  Overall good
-                </Text>
-              </View>
-              <View style={[styles.tab1, styles.tabSpaceBlock]}>
-                <Text style={[styles.overallGood, styles.satisfyingTypo]}>
-                  Good service
-                </Text>
-              </View>
-              <View style={[styles.tab2, styles.tabSpaceBlock]}>
-                <Text style={[styles.satisfying, styles.satisfyingTypo]}>
-                  Satisfying
-                </Text>
-              </View>
-              <View style={[styles.tab2, styles.tabSpaceBlock]}>
-                <Text style={[styles.satisfying, styles.satisfyingTypo]}>
-                  Comfortable
-                </Text>
-              </View>
-              <View style={[styles.tab2, styles.tabSpaceBlock]}>
-                <Text style={[styles.satisfying, styles.satisfyingTypo]}>
-                  Recommended
-                </Text>
-              </View>
-              <View style={[styles.tab5, styles.tabSpaceBlock]}>
-                <Text style={[styles.satisfying, styles.satisfyingTypo]}>
-                  Cheap
-                </Text>
-              </View>
-              <View style={[styles.tab5, styles.tabSpaceBlock]}>
-                <Text style={[styles.satisfying, styles.satisfyingTypo]}>
-                  Perfect results
-                </Text>
-              </View>
-              <View style={[styles.tab2, styles.tabSpaceBlock]}>
-                <Text style={[styles.satisfying, styles.satisfyingTypo]}>
-                  Accurate estimate
-                </Text>
-              </View>
+              {tags.map((tag) => (
+                <Pressable
+                  key={tag}
+                  style={[
+                    styles.tab,
+                    styles.tabSpaceBlock,
+                    selectedTags.includes(tag) && styles.tabSelected,
+                  ]}
+                  onPress={() => handleTagPress(tag)}
+                >
+                  <Text style={[styles.overallGood, styles.satisfyingTypo]}>
+                    {tag}
+                  </Text>
+                </Pressable>
+              ))}
             </View>
           </View>
           <TouchableHighlight
             style={styles.buttonbig}
             underlayColor="#fff"
             activeOpacity={0.2}
-            onPress={() => navigation.navigate("InvoicePage")}
+            onPress={() => navigation.navigate("InvoicePage", {topHairStyle, topHairVolume, sideHairStyle, backHairStyle, selectedStylist})}
           >
             <Text style={[styles.label, styles.backTypo]}>Send</Text>
           </TouchableHighlight>
         </View>
         <View style={[styles.topNavigationBar, styles.topNavigationBarBg]}>
-          <View style={styles.content}>
-            <View style={styles.label1}>
-              <Pressable
-                style={styles.boldLayout}
-                onPress={() => navigation.goBack()}
-              >
-                <Image
-                  style={styles.icon}
-                  contentFit="cover"
-                  source={require("../assets/linear--arrows--arrow-left1.png")}
-                />
-              </Pressable>
-              <Text style={[styles.back, styles.backTypo]}>Back</Text>
-            </View>
-            <View style={styles.actionsRight}>
-              <Image
-                style={[styles.boldEssentionalUiShare, styles.boldLayout]}
-                contentFit="cover"
-                source={require("../assets/bold--essentional-ui--share1.png")}
-              />
-              <Image
-                style={[styles.boldEssentionalUiMenu, styles.boldLayout]}
-                contentFit="cover"
-                source={require("../assets/bold--essentional-ui--menu-dots1.png")}
-              />
-            </View>
-          </View>
+        <Text style={[styles.back, styles.backTypo]}>
+                 <Text style={[styles.back, styles.backTypo]}>
+                Tell us your experience!
+              </Text>
+              </Text>
         </View>
       </View>
     </ScrollView>
@@ -200,6 +173,7 @@ const styles = StyleSheet.create({
   textArea1Layout: {
     width: 339,
     flexDirection: "row",
+    flexWrap: "wrap",
   },
   tabFlexBox: {
     paddingVertical: Padding.p_9xs,
@@ -227,6 +201,12 @@ const styles = StyleSheet.create({
     borderRadius: Border.br_5xs,
     flexDirection: "row",
     alignItems: "center",
+  },
+  tabSelected: {
+    backgroundColor: Color.colorLightseagreen_100,
+    borderColor: Color.colorPrimaryBrand500,
+    borderWidth: 1,
+    borderStyle: "solid",
   },
   backTypo: {
     color: Color.colorWhite900,
@@ -284,6 +264,8 @@ const styles = StyleSheet.create({
     height: 26,
     borderWidth: 1,
     borderStyle: "solid",
+    marginBottom: 8,
+    marginRight: 8,
   },
   textArea1: {
     borderColor: Color.colorLightgray,
@@ -369,8 +351,8 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   back: {
-    marginLeft: 24,
-    textAlign: "left",
+    marginTop: 45,
+    textAlign: "center",
   },
   label1: {
     flexDirection: "row",

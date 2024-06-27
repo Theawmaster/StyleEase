@@ -1,23 +1,46 @@
 import * as React from "react";
+import { useState } from "react";
 import {
   ScrollView,
   Text,
   StyleSheet,
   View,
-  Pressable,
   TouchableHighlight,
+  TouchableOpacity,
 } from "react-native";
 import { Image } from "expo-image";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation, ParamListBase } from "@react-navigation/native";
+import { useNavigation, ParamListBase, useRoute, RouteProp } from "@react-navigation/native";
 import { Padding, Color, Border, FontFamily, FontSize } from "../GlobalStyles";
+
+type RouteParams = {
+  topHairStyle: string;
+  topHairVolume: string;
+};
 
 const SideHairPage = () => {
   const navigation = useNavigation<StackNavigationProp<ParamListBase>>();
+  const route = useRoute<RouteProp<{ params: RouteParams }, 'params'>>();
+  const { topHairStyle, topHairVolume } = route.params || {};
+  const [selectedStyle, setSelectedStyle] = useState<string | null>(null);
+  const [warning, setWarning] = useState<string>("");
+
+  const handleStyleSelection = (style: string) => {
+    setSelectedStyle(style);
+  };
+
+  const handleProceed = () => {
+    if (!selectedStyle) {
+      setWarning("Please select a style.");
+    } else {
+      setWarning(""); // Clear the warning when proceeding successfully
+      navigation.navigate("BackHairPage", { topHairStyle, topHairVolume, sideHairStyle: selectedStyle });
+    }
+  };  
 
   return (
     <ScrollView
-      style={styles.sideHairPage}
+      style={[styles.sideHairPage, styles.containerPadding]}
       horizontal={false}
       showsVerticalScrollIndicator={true}
       showsHorizontalScrollIndicator={true}
@@ -55,12 +78,12 @@ const SideHairPage = () => {
                 onPress={() => navigation.navigate("TopHairPage")}
               >
                 <Image
-                  style={styles.icon}
+                  style={[styles.icon, { marginTop: 20 }]}
                   contentFit="cover"
                   source={require("../assets/linear--arrows--arrow-left.png")}
                 />
               </TouchableHighlight>
-              <Text style={[styles.label1, styles.styleTypo]}>Back</Text>
+              <Text style={[styles.label1, styles.styleTypo, { marginTop: 35 }]}>Back</Text>
             </View>
             <View style={styles.actionsRight}>
               <Image
@@ -141,216 +164,135 @@ const SideHairPage = () => {
             />
           </View>
           <Text style={[styles.style, styles.styleTypo]}>Style:</Text>
-          <View style={styles.list1}>
-            <Image
-              style={styles.slickbackLayout}
-              contentFit="cover"
-              source={require("../assets/slickback1.png")}
-            />
-            <View style={[styles.fadeParent, styles.parentFlexBox]}>
-              <Text style={[styles.fade, styles.lowTypo]}>Fade</Text>
+
+          <TouchableOpacity onPress={() => handleStyleSelection("Fade")}>
+            <View style={styles.list1}>
               <Image
-                style={styles.frameChild}
+                style={styles.slickbackLayout}
                 contentFit="cover"
-                source={require("../assets/ellipse-260.png")}
+                source={require("../assets/slickback1.png")}
               />
-              <View style={[styles.locatoin, styles.boldLayout]} />
+              <View style={[styles.fadeParent, styles.parentFlexBox]}>
+                <Text style={[styles.fade, styles.lowTypo]}>Fade</Text>
+                <Image
+                  style={styles.frameChild}
+                  contentFit="cover"
+                  source={selectedStyle === "Fade" ? require("../assets/ellipse-2601.png") : require("../assets/ellipse-260.png")}
+                />
+                <View style={[styles.locatoin, styles.boldLayout]} />
+              </View>
+              <View style={[styles.slickback, styles.slickbackLayout]} />
             </View>
-            <View style={[styles.slickback, styles.slickbackLayout]} />
-          </View>
-          <View style={styles.list1}>
-            <Image
-              style={styles.slickbackLayout}
-              contentFit="cover"
-              source={require("../assets/rectangle-1548.png")}
-            />
-            <View style={[styles.fadeParent, styles.parentFlexBox]}>
-              <Text style={[styles.fade, styles.lowTypo]}>High</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => handleStyleSelection("High")}>
+            <View style={styles.list1}>
               <Image
-                style={styles.frameChild}
+                style={styles.slickbackLayout}
                 contentFit="cover"
-                source={require("../assets/ellipse-2601.png")}
+                source={require("../assets/rectangle-1548.png")}
               />
-              <View style={[styles.locatoin, styles.boldLayout]} />
-            </View>
-            <View style={[styles.slickback, styles.slickbackLayout]} />
-          </View>
-          <View style={styles.list1}>
-            <Image
-              style={styles.slickbackLayout}
-              contentFit="cover"
-              source={require("../assets/rectangle-15481.png")}
-            />
-            <View style={styles.frameView}>
-              <View style={[styles.midParent, styles.parentFlexBox]}>
-                <Text style={[styles.fade, styles.lowTypo]}>Mid</Text>
+              <View style={[styles.fadeParent, styles.parentFlexBox]}>
+                <Text style={[styles.fade, styles.lowTypo]}>High</Text>
                 <Image
                   style={styles.frameChild}
                   contentFit="cover"
-                  source={require("../assets/ellipse-260.png")}
+                  source={selectedStyle === "High" ? require("../assets/ellipse-2601.png") : require("../assets/ellipse-260.png")}
                 />
                 <View style={[styles.locatoin, styles.boldLayout]} />
               </View>
+              <View style={[styles.slickback, styles.slickbackLayout]} />
             </View>
-            <View style={[styles.slickback, styles.slickbackLayout]} />
-          </View>
-          <View style={styles.list1}>
-            <Image
-              style={styles.slickbackLayout}
-              contentFit="cover"
-              source={require("../assets/rectangle-15482.png")}
-            />
-            <View style={styles.frameView}>
-              <View style={[styles.midParent, styles.parentFlexBox]}>
-                <Text style={[styles.low, styles.lowTypo]}>Low</Text>
-                <Image
-                  style={styles.frameChild}
-                  contentFit="cover"
-                  source={require("../assets/ellipse-260.png")}
-                />
-                <View style={[styles.locatoin, styles.boldLayout]} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => handleStyleSelection("Mid")}>
+            <View style={styles.list1}>
+              <Image
+                style={styles.slickbackLayout}
+                contentFit="cover"
+                source={require("../assets/rectangle-15481.png")}
+              />
+              <View style={styles.frameView}>
+                <View style={[styles.midParent, styles.parentFlexBox]}>
+                  <Text style={[styles.fade, styles.lowTypo]}>Mid</Text>
+                  <Image
+                    style={styles.frameChild}
+                    contentFit="cover"
+                    source={selectedStyle === "Mid" ? require("../assets/ellipse-2601.png") : require("../assets/ellipse-260.png")}
+                  />
+                  <View style={[styles.locatoin, styles.boldLayout]} />
+                </View>
               </View>
+              <View style={[styles.slickback, styles.slickbackLayout]} />
             </View>
-            <View style={[styles.slickback, styles.slickbackLayout]} />
-          </View>
-          <View style={styles.list1}>
-            <Image
-              style={styles.slickbackLayout}
-              contentFit="cover"
-              source={require("../assets/rectangle-15483.png")}
-            />
-            <View style={styles.frameView}>
-              <View style={[styles.midParent, styles.parentFlexBox]}>
-                <Text style={[styles.fade, styles.lowTypo]}>Burst</Text>
-                <Image
-                  style={styles.frameChild}
-                  contentFit="cover"
-                  source={require("../assets/ellipse-260.png")}
-                />
-                <View style={[styles.locatoin, styles.boldLayout]} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => handleStyleSelection("Low")}>
+            <View style={styles.list1}>
+              <Image
+                style={styles.slickbackLayout}
+                contentFit="cover"
+                source={require("../assets/rectangle-15482.png")}
+              />
+              <View style={styles.frameView}>
+                <View style={[styles.midParent, styles.parentFlexBox]}>
+                  <Text style={[styles.low, styles.lowTypo]}>Low</Text>
+                  <Image
+                    style={styles.frameChild}
+                    contentFit="cover"
+                    source={selectedStyle === "Low" ? require("../assets/ellipse-2601.png") : require("../assets/ellipse-260.png")}
+                  />
+                  <View style={[styles.locatoin, styles.boldLayout]} />
+                </View>
               </View>
+              <View style={[styles.slickback, styles.slickbackLayout]} />
             </View>
-            <View style={[styles.slickback, styles.slickbackLayout]} />
-          </View>
-          <View style={styles.list1}>
-            <Image
-              style={styles.slickbackLayout}
-              contentFit="cover"
-              source={require("../assets/rectangle-15484.png")}
-            />
-            <View style={styles.frameView}>
-              <View style={[styles.midParent, styles.parentFlexBox]}>
-                <Text style={[styles.fade, styles.lowTypo]}>Taper</Text>
-                <Image
-                  style={styles.frameChild}
-                  contentFit="cover"
-                  source={require("../assets/ellipse-260.png")}
-                />
-                <View style={[styles.locatoin, styles.boldLayout]} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => handleStyleSelection("Burst")}>
+            <View style={styles.list1}>
+              <Image
+                style={styles.slickbackLayout}
+                contentFit="cover"
+                source={require("../assets/rectangle-15483.png")}
+              />
+              <View style={styles.frameView}>
+                <View style={[styles.midParent, styles.parentFlexBox]}>
+                  <Text style={[styles.fade, styles.lowTypo]}>Burst</Text>
+                  <Image
+                    style={styles.frameChild}
+                    contentFit="cover"
+                    source={selectedStyle === "Burst" ? require("../assets/ellipse-2601.png") : require("../assets/ellipse-260.png")}
+                  />
+                  <View style={[styles.locatoin, styles.boldLayout]} />
+                </View>
               </View>
+              <View style={[styles.slickback, styles.slickbackLayout]} />
             </View>
-            <View style={[styles.slickback, styles.slickbackLayout]} />
-          </View>
-          <View style={styles.list1}>
-            <Image
-              style={styles.slickbackLayout}
-              contentFit="cover"
-              source={require("../assets/rectangle-15485.png")}
-            />
-            <View style={styles.frameView}>
-              <View style={[styles.midParent, styles.parentFlexBox]}>
-                <Text style={[styles.fade, styles.lowTypo]}>Trim (Long)</Text>
-                <Image
-                  style={styles.frameChild}
-                  contentFit="cover"
-                  source={require("../assets/ellipse-260.png")}
-                />
-                <View style={[styles.locatoin, styles.boldLayout]} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => handleStyleSelection("Taper")}>
+            <View style={styles.list1}>
+              <Image
+                style={styles.slickbackLayout}
+                contentFit="cover"
+                source={require("../assets/rectangle-15484.png")}
+              />
+              <View style={styles.frameView}>
+                <View style={[styles.midParent, styles.parentFlexBox]}>
+                  <Text style={[styles.fade, styles.lowTypo]}>Taper</Text>
+                  <Image
+                    style={styles.frameChild}
+                    contentFit="cover"
+                    source={selectedStyle === "Taper" ? require("../assets/ellipse-2601.png") : require("../assets/ellipse-260.png")}
+                  />
+                  <View style={[styles.locatoin, styles.boldLayout]} />
+                </View>
               </View>
+              <View style={[styles.slickback, styles.slickbackLayout]} />
             </View>
-            <View style={[styles.slickback, styles.slickbackLayout]} />
-          </View>
-          <View style={styles.list1}>
-            <Image
-              style={styles.slickbackLayout}
-              contentFit="cover"
-              source={require("../assets/rectangle-15486.png")}
-            />
-            <View style={styles.frameView}>
-              <View style={[styles.midParent, styles.parentFlexBox]}>
-                <Text style={[styles.fade, styles.lowTypo]}>Flat shave</Text>
-                <Image
-                  style={styles.frameChild}
-                  contentFit="cover"
-                  source={require("../assets/ellipse-260.png")}
-                />
-                <View style={[styles.locatoin, styles.boldLayout]} />
-              </View>
-            </View>
-            <View style={[styles.slickback, styles.slickbackLayout]} />
-          </View>
-          <View style={styles.list1}>
-            <Image
-              style={styles.slickbackLayout}
-              contentFit="cover"
-              source={require("../assets/rectangle-15487.png")}
-            />
-            <View style={styles.frameView}>
-              <View style={[styles.midParent, styles.parentFlexBox]}>
-                <Text style={[styles.fade, styles.lowTypo]}>Number 1</Text>
-                <Image
-                  style={styles.frameChild}
-                  contentFit="cover"
-                  source={require("../assets/ellipse-260.png")}
-                />
-                <View style={[styles.locatoin, styles.boldLayout]} />
-              </View>
-            </View>
-            <View style={[styles.slickback, styles.slickbackLayout]} />
-          </View>
-          <View style={styles.list1}>
-            <Image
-              style={styles.slickbackLayout}
-              contentFit="cover"
-              source={require("../assets/rectangle-15488.png")}
-            />
-            <View style={styles.frameView}>
-              <View style={[styles.midParent, styles.parentFlexBox]}>
-                <Text style={[styles.fade, styles.lowTypo]}>Number 2</Text>
-                <Image
-                  style={styles.frameChild}
-                  contentFit="cover"
-                  source={require("../assets/ellipse-260.png")}
-                />
-                <View style={[styles.locatoin, styles.boldLayout]} />
-              </View>
-            </View>
-            <View style={[styles.slickback, styles.slickbackLayout]} />
-          </View>
-          <View style={styles.list1}>
-            <Image
-              style={styles.slickbackLayout}
-              contentFit="cover"
-              source={require("../assets/rectangle-15489.png")}
-            />
-            <View style={styles.frameView}>
-              <View style={[styles.midParent, styles.parentFlexBox]}>
-                <Text style={[styles.fade, styles.lowTypo]}>Number 3</Text>
-                <Image
-                  style={styles.frameChild}
-                  contentFit="cover"
-                  source={require("../assets/ellipse-260.png")}
-                />
-                <View style={[styles.locatoin, styles.boldLayout]} />
-              </View>
-            </View>
-            <View style={[styles.slickback, styles.slickbackLayout]} />
-          </View>
+          </TouchableOpacity>
+          {/* Add other styles similarly */}
           <TouchableHighlight
-            style={styles.sliderFilter}
+            style={[styles.sliderFilter, styles.buttonMargin]}
             underlayColor="#fff"
             activeOpacity={0.2}
-            onPress={() => navigation.navigate("BackHairPage")}
+            onPress={handleProceed}
           >
             <View style={styles.listOption}>
               <View style={[styles.tag5, styles.parentFlexBox]} />
@@ -359,6 +301,9 @@ const SideHairPage = () => {
               </View>
             </View>
           </TouchableHighlight>
+          {warning ? (
+            <Text style={styles.warningText}>{warning}</Text>
+          ) : null}
         </View>
       </ScrollView>
     </ScrollView>
@@ -366,6 +311,17 @@ const SideHairPage = () => {
 };
 
 const styles = StyleSheet.create({
+  containerPadding: {
+    paddingBottom: 40, // Adjust the value as needed
+  },
+  buttonMargin: {
+    marginBottom: 20, // Adjust the value as needed
+  },
+  warningText: {
+    color: "red",
+    marginTop: 20,
+    textAlign: "center",
+  },  
   sideHairScrollViewContent: {
     flexDirection: "column",
     alignItems: "center",
@@ -716,7 +672,7 @@ const styles = StyleSheet.create({
     fontSize: FontSize.size_xl,
     color: Color.colorBlack,
     width: 317,
-    height: 22,
+    height: 27,
     marginTop: 16,
   },
   fade: {

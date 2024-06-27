@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState } from "react";
 import { Image } from "expo-image";
 import {
   StyleSheet,
@@ -6,13 +7,36 @@ import {
   View,
   Pressable,
   TouchableHighlight,
+  Modal,
+  Button,
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation, ParamListBase } from "@react-navigation/native";
+import { useNavigation, ParamListBase, useRoute, RouteProp } from "@react-navigation/native";
 import { Color, FontSize, Padding, FontFamily, Border } from "../GlobalStyles";
+
+type RouteParams = {
+  topHairStyle: string;
+  topHairVolume: string;
+  sideHairStyle: string;
+  backHairStyle: string;
+  selectedStylist: string;
+};
 
 const Payment = () => {
   const navigation = useNavigation<StackNavigationProp<ParamListBase>>();
+  const route = useRoute<RouteProp<{ params: RouteParams }, 'params'>>();
+  const { topHairStyle, topHairVolume, sideHairStyle, backHairStyle, selectedStylist } = route.params;
+
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const currentDateTime = new Date();
+  const formattedDate = currentDateTime.toLocaleDateString();
+  const formattedTime = currentDateTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+  const handleConfirm = () => {
+    setModalVisible(false);
+    navigation.navigate("BookingAndRatingPage", {topHairStyle, topHairVolume, sideHairStyle, backHairStyle, selectedStylist});
+  };
 
   return (
     <View style={[styles.payment, styles.iconLayout]}>
@@ -30,9 +54,7 @@ const Payment = () => {
                 contentFit="cover"
                 source={require("../assets/bold--time--calendar.png")}
               />
-              <Text
-                style={[styles.dateTime, styles.textTypo]}
-              >{`Date & time`}</Text>
+              <Text style={[styles.dateTime, styles.textTypo]}>{`${formattedDate} ${formattedTime}`}</Text>
             </View>
           </View>
           <View style={styles.sectionServiceList}>
@@ -43,7 +65,7 @@ const Payment = () => {
                 source={require("../assets/linear--essentional-ui--scissors.png")}
               />
               <Text style={[styles.dateTime, styles.textTypo]}>
-                Service lits
+                Service list
               </Text>
             </View>
             <View style={[styles.list, styles.listFlexBox]}>
@@ -55,39 +77,14 @@ const Payment = () => {
                 />
                 <View style={styles.adamSteffParent}>
                   <Text style={[styles.adamSteff, styles.text3Typo]}>
-                    Hair trimming
+                    Service
                   </Text>
                   <Text style={[styles.hairTrimmingMiddle, styles.text4Typo]}>
-                    Hair trimming (Middle part, high and slope)
+                    Hair trimming by {selectedStylist}
                   </Text>
                 </View>
               </View>
               <Text style={[styles.text, styles.textTypo]}>$10.00</Text>
-            </View>
-          </View>
-          <View style={styles.sectionServiceList}>
-            <Text style={[styles.applyCoupon, styles.textTypo]}>
-              Apply Coupon
-            </Text>
-            <View style={styles.textField}>
-              <View style={styles.field}>
-                <View style={styles.inputContent}>
-                  <Image
-                    style={styles.boldLayout1}
-                    contentFit="cover"
-                    source={require("../assets/discountshape.png")}
-                  />
-                </View>
-                <Image
-                  style={[styles.boldEssentionalUiInfo, styles.boldLayout1]}
-                  contentFit="cover"
-                  source={require("../assets/bold--essentional-ui--info-circle.png")}
-                />
-                <View style={[styles.buttonbig, styles.buttonbigPosition]}>
-                  <Text style={[styles.label, styles.labelTypo]}>Apply</Text>
-                </View>
-              </View>
-              <Text style={styles.couponIsActive}>Coupon is active</Text>
             </View>
           </View>
           <View style={styles.sectionPaymentSummary}>
@@ -142,7 +139,7 @@ const Payment = () => {
           style={[styles.buttonbig1, styles.cardPosition]}
           underlayColor="#fff"
           activeOpacity={0.2}
-          onPress={() => navigation.navigate("BookingAndRatingPage")}
+          onPress={() => setModalVisible(true)}
         >
           <>
             <Text style={[styles.printReceiptTo, styles.labelTypo]}>
@@ -211,12 +208,12 @@ const Payment = () => {
               onPress={() => navigation.goBack()}
             >
               <Image
-                style={[styles.icon, styles.iconLayout]}
+                style={[styles.icon, styles.iconLayout, { marginTop: 20 }]}
                 contentFit="cover"
                 source={require("../assets/linear--arrows--arrow-left1.png")}
               />
             </Pressable>
-            <Text style={[styles.label2, styles.textClr]}>Back</Text>
+            <Text style={[styles.label2, styles.textClr, { marginTop: 38 }]}>Back</Text>
           </View>
           <View style={styles.actionsRight}>
             <Image
@@ -232,6 +229,30 @@ const Payment = () => {
           </View>
         </View>
       </View>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>Are you sure you want to proceed?</Text>
+            <Button
+              title="Yes"
+              onPress={handleConfirm}
+              color={Color.colorLightseagreen_100}
+            />
+            <Button
+              title="No"
+              onPress={() => setModalVisible(!modalVisible)}
+              color={Color.colorCoolGray500}
+            />
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -382,11 +403,6 @@ const styles = StyleSheet.create({
   sectionServiceList: {
     marginTop: 24,
     alignSelf: "stretch",
-  },
-  applyCoupon: {
-    textAlign: "left",
-    fontFamily: FontFamily.typographyHeadline416,
-    fontWeight: "700",
   },
   inputContent: {
     zIndex: 0,
@@ -712,6 +728,33 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     flex: 1,
     backgroundColor: Color.colorLightseagreen_100,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });
 

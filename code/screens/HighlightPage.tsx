@@ -236,7 +236,7 @@ const HighlightPage = () => {
             <View style={[styles.content, styles.ratingFlexBox]}>
               <View style={styles.label1}>
                 <TouchableHighlight
-                  style={styles.boldLayout}
+                  style={[styles.boldLayout, { marginTop: 50 }]}
                   underlayColor="#fff"
                   activeOpacity={0.2}
                   onPress={() => navigation.navigate("MainLoadingPage")}
@@ -247,7 +247,7 @@ const HighlightPage = () => {
                     source={require("../assets/linear--arrows--arrow-left.png")}
                   />
                 </TouchableHighlight>
-                <Text style={[styles.label2, styles.label2Typo]}>Back</Text>
+                <Text style={[styles.label2, styles.label2Typo, { marginTop: 47 }]}>Back</Text>
               </View>
               <View style={styles.actionsRight}>
                 <Image

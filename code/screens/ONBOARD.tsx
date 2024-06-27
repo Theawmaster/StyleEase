@@ -30,6 +30,7 @@ const ONBOARD = () => {
           />
         </View>
         <Text style={styles.styleease}>StyleEase</Text>
+        <Text style={styles.tapToBegin}>Tap anywhere to begin</Text>
       </>
     </TouchableHighlight>
   );
@@ -55,12 +56,21 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   styleease: {
-    height: "2.59%",
-    width: "50.13%",
-    top: "59.98%",
-    left: "26.13%",
-    fontSize: 32,
+    top: "58%",
+    left: "29%",
+    transform: [{ translateX: -0.5 }, { translateY: -0.5 }],
+    fontSize: 40, // Increased font size
     fontWeight: "700",
+    fontFamily: FontFamily.interBold,
+    color: Color.colorWhite900,
+    textAlign: "center",
+    position: "absolute",
+  },
+  tapToBegin: {
+    top: "90%",
+    left: "26%",
+    transform: [{ translateX: -0.5 }, { translateY: -0.5 }],
+    fontSize: 18, // Adjusted font size
     fontFamily: FontFamily.interBold,
     color: Color.colorWhite900,
     textAlign: "center",

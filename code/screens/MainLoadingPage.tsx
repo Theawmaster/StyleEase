@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 import { Image } from "expo-image";
 import {
   StyleSheet,
@@ -6,82 +6,151 @@ import {
   View,
   Pressable,
   TouchableHighlight,
+  TextInput,
+  Platform,
+  KeyboardAvoidingView
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation, ParamListBase } from "@react-navigation/native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Color, FontSize, FontFamily, Padding, Border } from "../GlobalStyles";
 
 const MainLoadingPage = () => {
   const navigation = useNavigation<StackNavigationProp<ParamListBase>>();
+  const [selectedService, setSelectedService] = useState("Basic haircut");
+  const [additionalDetails, setAdditionalDetails] = useState(""); // State for additional details
+
+  const handleApplyPress = () => {
+    if (selectedService === "Basic haircut") {
+      navigation.navigate("TopHairPage");
+    } else if (selectedService === "Coloring") {
+      navigation.navigate("DyePage");
+    } else if (selectedService === "Perming") {
+      navigation.navigate("PermPage");
+    }
+  };
 
   return (
-    <View style={[styles.mainLoadingPage, styles.iconLayout]}>
-      <View style={styles.option}>
-        <View style={styles.modalHeader}>
-          <View style={styles.content}>
-            <Image
-              style={styles.featuredIcon}
-              contentFit="cover"
-              source={require("../assets/featured-icon1.png")}
-            />
-            <Text style={[styles.chooseYourService, styles.chooseFlexBox]}>
-              Choose your service
-            </Text>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <KeyboardAwareScrollView
+        contentContainerStyle={styles.container}
+      >
+        <View style={[styles.mainLoadingPage, styles.iconLayout]}>
+          <View style={styles.option}>
+            <View style={styles.modalHeader}>
+              <View style={styles.content}>
+                <Image
+                  style={styles.featuredIcon}
+                  contentFit="cover"
+                  source={require("../assets/featured-icon1.png")}
+                />
+                <Text style={[styles.chooseYourService, styles.chooseFlexBox]}>
+                  Choose your service
+                </Text>
+              </View>
+              <Pressable
+                style={styles.boldEssentionalUiClose}
+                onPress={() => navigation.navigate("ONBOARD6")}
+              >
+                <Image
+                  style={[styles.icon, styles.iconLayout]}
+                  contentFit="cover"
+                  source={require("../assets/bold--essentional-ui--close-square1.png")}
+                />
+              </Pressable>
+            </View>
+            <View style={styles.buttonbigSpaceBlock}>
+              <Text style={[styles.chooseService, styles.labelTypo]}>
+                Choose service
+              </Text>
+              <View style={styles.listOption}>
+                <Pressable
+                  style={[
+                    styles.tag,
+                    styles.tagSpaceBlock,
+                    selectedService === "Basic haircut" && styles.selectedTag,
+                  ]}
+                  onPress={() => setSelectedService("Basic haircut")}
+                >
+                  <Text style={[
+                    styles.basicHaircut,
+                    styles.coloringTypo,
+                    selectedService === "Basic haircut" && styles.selectedText,
+                  ]}>
+                    Basic haircut
+                  </Text>
+                </Pressable>
+                <Pressable
+                  style={[
+                    styles.tag1,
+                    styles.tagFlexBox,
+                    selectedService === "Coloring" && styles.selectedTag,
+                  ]}
+                  onPress={() => setSelectedService("Coloring")}
+                >
+                  <Text style={[
+                    styles.coloring,
+                    styles.coloringTypo,
+                    selectedService === "Coloring" && styles.selectedText,
+                  ]}>
+                    Coloring
+                  </Text>
+                </Pressable>
+                <Pressable
+                  style={[
+                    styles.tag2,
+                    styles.tagFlexBox,
+                    selectedService === "Perming" && styles.selectedTag,
+                  ]}
+                  onPress={() => setSelectedService("Perming")}
+                >
+                  <Text style={[
+                    styles.coloring,
+                    styles.coloringTypo,
+                    selectedService === "Perming" && styles.selectedText,
+                  ]}>
+                    Perming
+                  </Text>
+                </Pressable>
+                <View style={[styles.tag3, styles.tagFlexBox]} />
+              </View>
+            </View>
+            <View style={styles.buttonbigSpaceBlock}>
+              <Text style={[styles.chooseService, styles.labelTypo]}>
+                Additional details
+              </Text>
+              <TextInput
+                style={[styles.textArea, styles.tagBorder]}
+                multiline
+                numberOfLines={4}
+                onChangeText={setAdditionalDetails}
+                value={additionalDetails}
+                placeholder="Enter additional details here"
+                textAlignVertical="top" // Ensures text starts from the top
+              />
+            </View>
+            <TouchableHighlight
+              style={[styles.buttonbig, styles.tagFlexBox1]}
+              underlayColor="#fff"
+              activeOpacity={0.2}
+              onPress={handleApplyPress}
+            >
+              <Text style={[styles.label, styles.labelTypo]}>Apply</Text>
+            </TouchableHighlight>
           </View>
-          <Pressable
-            style={styles.boldEssentionalUiClose}
-            onPress={() => navigation.navigate("ONBOARD6")}
-          >
-            <Image
-              style={[styles.icon, styles.iconLayout]}
-              contentFit="cover"
-              source={require("../assets/bold--essentional-ui--close-square1.png")}
-            />
-          </Pressable>
         </View>
-        <View style={styles.buttonbigSpaceBlock}>
-          <Text style={[styles.chooseService, styles.labelTypo]}>
-            Choose service
-          </Text>
-          <View style={styles.listOption}>
-            <View style={[styles.tag, styles.tagSpaceBlock]}>
-              <Text style={[styles.basicHaircut, styles.coloringTypo]}>
-                Basic haircut
-              </Text>
-            </View>
-            <View style={[styles.tag1, styles.tagFlexBox]}>
-              <Text style={[styles.coloring, styles.coloringTypo]}>
-                Coloring
-              </Text>
-            </View>
-            <View style={[styles.tag2, styles.tagFlexBox]}>
-              <Text style={[styles.coloring, styles.coloringTypo]}>
-                Perming
-              </Text>
-            </View>
-            <View style={[styles.tag3, styles.tagFlexBox]} />
-          </View>
-        </View>
-        <View style={styles.buttonbigSpaceBlock}>
-          <Text style={[styles.chooseService, styles.labelTypo]}>
-            Additional details
-          </Text>
-          <View style={[styles.textArea, styles.tagBorder]} />
-        </View>
-        <TouchableHighlight
-          style={[styles.buttonbig, styles.tagFlexBox1]}
-          underlayColor="#fff"
-          activeOpacity={0.2}
-          onPress={() => navigation.navigate("TopHairPage")}
-        >
-          <Text style={[styles.label, styles.labelTypo]}>Apply</Text>
-        </TouchableHighlight>
-      </View>
-    </View>
+      </KeyboardAwareScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flexGrow: 1,
+  },
   iconLayout: {
     width: "100%",
     overflow: "hidden",
@@ -162,12 +231,19 @@ const styles = StyleSheet.create({
     color: Color.colorCoolGray900,
   },
   basicHaircut: {
-    color: Color.colorPrimaryBrand900,
+    color: Color.colorLightseagreen_100,
+  },
+  selectedTag: {
+    backgroundColor: Color.colorLightseagreen_100,
+    borderColor: Color.colorLightseagreen_100,
+  },
+  selectedText: {
+    color: Color.colorWhite900,
   },
   tag: {
     borderColor: Color.colorLightseagreen_100,
     justifyContent: "center",
-    backgroundColor: Color.colorLightseagreen_100,
+    backgroundColor: Color.colorWhite900,
     borderRadius: Border.br_5xs,
     alignItems: "center",
     borderWidth: 1,
@@ -180,6 +256,10 @@ const styles = StyleSheet.create({
     paddingVertical: Padding.p_9xs,
     paddingHorizontal: Padding.p_5xs,
     flexDirection: "row",
+    borderColor: Color.colorLightseagreen_100,
+    borderWidth: 1,
+    backgroundColor: Color.colorWhite900,
+    borderRadius: Border.br_5xs,
   },
   tag2: {
     paddingVertical: Padding.p_9xs,
@@ -187,6 +267,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     marginLeft: 12,
+    borderColor: Color.colorLightseagreen_100,
+    borderWidth: 1,
+    backgroundColor: Color.colorWhite900,
+    borderRadius: Border.br_5xs,
   },
   tag3: {
     width: 105,
@@ -210,6 +294,8 @@ const styles = StyleSheet.create({
     borderStyle: "solid",
     marginTop: 18,
     width: 339,
+    padding: 10, // Add padding for better text input UX
+    textAlignVertical: 'top' // Ensure text starts at the top of the input box
   },
   label: {
     color: Color.colorWhite900,

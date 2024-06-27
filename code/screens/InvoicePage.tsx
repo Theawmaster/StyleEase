@@ -9,11 +9,25 @@ import {
 } from "react-native";
 import { Image } from "expo-image";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation, ParamListBase } from "@react-navigation/native";
+import { useNavigation, ParamListBase, useRoute, RouteProp } from "@react-navigation/native";
 import { Color, FontFamily, Border, FontSize, Padding } from "../GlobalStyles";
+
+type RouteParams = {
+  topHairStyle: string;
+  topHairVolume: string;
+  sideHairStyle: string;
+  backHairStyle: string;
+  selectedStylist: string;
+};
 
 const InvoicePage = () => {
   const navigation = useNavigation<StackNavigationProp<ParamListBase>>();
+  const route = useRoute<RouteProp<{ params: RouteParams }, 'params'>>();
+  const { topHairStyle, topHairVolume, sideHairStyle, backHairStyle, selectedStylist } = route.params;
+
+  const currentDate = new Date();
+  const formattedDate = currentDate.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' });
+
 
   return (
     <ScrollView
@@ -31,25 +45,27 @@ const InvoicePage = () => {
         />
         <View style={[styles.containers, styles.rectangleBg]}>
           <View style={styles.containers1}>
-            <View style={[styles.sectionDetail, styles.contentFlexBox]}>
-              <View style={styles.detail}>
-                <Text
-                  style={[styles.asHairStudio, styles.text2Typo]}
-                  numberOfLines={1}
-                >
-                  AS Hair Studio
-                </Text>
-                <View style={styles.hairTrimmingMiddlePartHiWrapper}>
+          <View style={[styles.sectionDetail, styles.contentFlexBox]}>
+                <View style={styles.detail}>
                   <Text
-                    style={styles.hairTrimmingMiddle}
-                  >{`Hair trimming (Middle part, high 
-and slope)`}</Text>
+                    style={[styles.asHairStudio, styles.text2Typo]}
+                    numberOfLines={1}
+                  >
+                    AS Hair Studio
+                  </Text>
+                  <View style={styles.hairTrimmingMiddlePartHiWrapper}>
+                    <Text style={styles.hairTrimmingMiddle}>
+                      {`Trimming: ${topHairStyle}, volume: ${topHairVolume}, 
+${sideHairStyle}, ${backHairStyle}
+
+Stylist: ${selectedStylist}`}
+                    </Text>
+                  </View>
                 </View>
+                <Text style={[styles.sun15Jan, styles.sun15JanTypo]}>
+                  {formattedDate}
+                </Text>
               </View>
-              <Text style={[styles.sun15Jan, styles.sun15JanTypo]}>
-                Sun, 15 Jan
-              </Text>
-            </View>
             <View style={styles.sectionPaymentSummary}>
               <Text
                 style={[styles.paymentSummary, styles.text2Typo]}
@@ -128,37 +144,8 @@ and slope)`}</Text>
             </View>
           </View>
         </View>
-        <View style={[styles.topNavigationBar, styles.invoiceBg]}>
-          <View style={[styles.statusBar, styles.statusBarFlexBox]}>
-            <Text style={styles.text3}>19:27</Text>
-            <View style={styles.signalParent}>
-              <View style={styles.signal}>
-                <View style={[styles.rectangle, styles.rectangleBorder]} />
-                <View style={[styles.rectangle1, styles.rectanglePosition1]} />
-                <View style={[styles.rectangle2, styles.rectangleBorder]} />
-                <View style={[styles.rectangle3, styles.rectanglePosition]} />
-              </View>
-              <View style={styles.battry}>
-                <View style={[styles.rectangle4, styles.rectanglePosition1]} />
-                <View style={[styles.rectangle5, styles.rectanglePosition]} />
-                <View style={[styles.rectangle6, styles.rectangleBorder]} />
-              </View>
-            </View>
-          </View>
+        <View>
           <View style={[styles.content, styles.contentFlexBox]}>
-            <View style={styles.label}>
-              <Pressable
-                style={styles.boldLayout}
-                onPress={() => navigation.goBack()}
-              >
-                <Image
-                  style={styles.icon}
-                  contentFit="cover"
-                  source={require("../assets/linear--arrows--arrow-left1.png")}
-                />
-              </Pressable>
-              <Text style={[styles.label1, styles.text2Typo]}>Back</Text>
-            </View>
             <View style={styles.statusBarFlexBox}>
               <Image
                 style={[styles.boldEssentionalUiShare, styles.boldLayout]}
@@ -356,9 +343,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     overflow: "hidden",
     backgroundColor: Color.colorLightseagreen_100,
+    height: 60,
   },
   tapToPrint: {
     color: Color.colorPrimaryBrand900,
+    height:21,
   },
   outlineWeatherCloudDown: {
     marginLeft: 10,
@@ -366,8 +355,8 @@ const styles = StyleSheet.create({
   buttonbig1: {
     borderColor: Color.colorPrimaryBrand900,
     borderWidth: 2,
-    width: 183,
-    height: 54,
+    width: 168,
+    height: 60,
     marginLeft: 25,
     borderStyle: "solid",
     paddingVertical: Padding.p_mid,

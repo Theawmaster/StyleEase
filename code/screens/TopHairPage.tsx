@@ -1,12 +1,34 @@
-import * as React from "react";
+import React, { useState } from "react";
 import { Image } from "expo-image";
-import { StyleSheet, Text, View, Pressable, TouchableHighlight, ScrollView } from "react-native";
+import { StyleSheet, Text, View, Pressable, TouchableHighlight, ScrollView, TouchableOpacity } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation, ParamListBase } from "@react-navigation/native";
 import { Color, Padding, FontFamily, FontSize, Border } from "../GlobalStyles";
 
 const TopHairPage = () => {
   const navigation = useNavigation<StackNavigationProp<ParamListBase>>();
+  const [selectedStyle, setSelectedStyle] = useState<string | null>(null);
+  const [selectedVolume, setSelectedVolume] = useState<string | null>(null);
+  const [warning, setWarning] = useState<string>("");
+
+  const handleStyleSelection = (style: string) => {
+    setSelectedStyle(style);
+    setWarning(""); // Clear warning when a selection is made
+  };
+
+  const handleVolumeSelection = (volume: string) => {
+    setSelectedVolume(volume);
+    setWarning(""); // Clear warning when a selection is made
+  };
+
+  const handleProceed = () => {
+    if (!selectedStyle || !selectedVolume) {
+      setWarning("Please select both a style and volume.");
+    } else {
+      setWarning(""); // Clear the warning when proceeding successfully
+      navigation.navigate("SideHairPage", { topHairStyle: selectedStyle, topHairVolume: selectedVolume });
+    }
+  };  
 
   return (
     <View style={styles.container}>
@@ -81,128 +103,149 @@ const TopHairPage = () => {
                   />
                 </View>
                 <Text style={[styles.style, styles.styleTypo]}>Style:</Text>
-                <View style={styles.list1}>
-                  <Image
-                    style={styles.listChild}
-                    contentFit="cover"
-                    source={require("../assets/rectangle-1547.png")}
-                  />
-                  <View style={styles.listInner}>
-                    <View style={styles.buzzCutParent}>
-                      <Text style={styles.buzzCut}>Buzz cut</Text>
-                      <Image
-                        style={styles.frameChild}
-                        contentFit="cover"
-                        source={require("../assets/ellipse-260.png")}
-                      />
-                      <View style={[styles.locatoin, styles.boldLayout1]} />
-                    </View>
-                  </View>
-                </View>
-                <View style={styles.list1}>
-                  <Image
-                    style={styles.listChild}
-                    contentFit="cover"
-                    source={require("../assets/slickback.png")}
-                  />
-                  <View style={styles.combBackParent}>
-                    <Text style={styles.buzzCut}>Comb back</Text>
+                
+                {/* Repeat TouchableOpacity for other styles */}
+                <TouchableOpacity onPress={() => handleStyleSelection("Fringe")}>
+                  <View style={styles.list1}>
                     <Image
-                      style={styles.frameChild}
+                      style={styles.listChild}
                       contentFit="cover"
-                      source={require("../assets/ellipse-260.png")}
+                      source={require("../assets/rectangle-15472.png")}
                     />
-                    <View style={[styles.locatoin, styles.boldLayout1]} />
-                  </View>
-                </View>
-                <View style={styles.list1}>
-                  <Image
-                    style={styles.listChild}
-                    contentFit="cover"
-                    source={require("../assets/rectangle-15471.png")}
-                  />
-                  <View style={styles.listInner}>
-                    <View style={styles.buzzCutParent}>
-                      <Text style={styles.buzzCut}>Crew cut</Text>
-                      <Image
-                        style={styles.frameChild}
-                        contentFit="cover"
-                        source={require("../assets/ellipse-260.png")}
-                      />
-                      <View style={[styles.locatoin, styles.boldLayout1]} />
+                    <View style={styles.listInner}>
+                      <View style={styles.buzzCutParent}>
+                        <Text style={styles.buzzCut}>Fringe</Text>
+                        <Image
+                          style={styles.frameChild}
+                          contentFit="cover"
+                          source={selectedStyle === "Fringe" ? require("../assets/ellipse-2601.png") : require("../assets/ellipse-260.png")}
+                        />
+                        <View style={[styles.locatoin, styles.boldLayout1]} />
+                      </View>
                     </View>
                   </View>
-                </View>
-                <View style={styles.list1}>
-                  <Image
-                    style={styles.listChild}
-                    contentFit="cover"
-                    source={require("../assets/rectangle-15472.png")}
-                  />
-                  <View style={styles.listInner}>
-                    <View style={styles.buzzCutParent}>
-                      <Text style={styles.buzzCut}>Fringe</Text>
-                      <Image
-                        style={styles.frameChild}
-                        contentFit="cover"
-                        source={require("../assets/ellipse-260.png")}
-                      />
-                      <View style={[styles.locatoin, styles.boldLayout1]} />
-                    </View>
-                  </View>
-                </View>
-                <View style={styles.list1}>
-                  <Image
-                    style={styles.listChild}
-                    contentFit="cover"
-                    source={require("../assets/rectangle-15473.png")}
-                  />
-                  <View style={styles.combBackParent}>
-                    <Text style={styles.buzzCut}>Middle part</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => handleStyleSelection("Middle part")}>
+                  <View style={styles.list1}>
                     <Image
-                      style={styles.frameChild}
+                      style={styles.listChild}
                       contentFit="cover"
-                      source={require("../assets/ellipse-2601.png")}
+                      source={require("../assets/rectangle-15473.png")}
                     />
-                    <View style={[styles.locatoin, styles.boldLayout1]} />
-                  </View>
-                </View>
-                <View style={styles.list1}>
-                  <Image
-                    style={styles.listChild}
-                    contentFit="cover"
-                    source={require("../assets/rectangle-15474.png")}
-                  />
-                  <View style={styles.listInner}>
-                    <View style={styles.buzzCutParent}>
-                      <Text style={styles.buzzCut}>Side part</Text>
+                    <View style={styles.combBackParent}>
+                      <Text style={styles.buzzCut}>Middle part</Text>
                       <Image
                         style={styles.frameChild}
                         contentFit="cover"
-                        source={require("../assets/ellipse-260.png")}
+                        source={selectedStyle === "Middle part" ? require("../assets/ellipse-2601.png") : require("../assets/ellipse-260.png")}
                       />
                       <View style={[styles.locatoin, styles.boldLayout1]} />
                     </View>
                   </View>
-                </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => handleStyleSelection("Side part")}>
+                  <View style={styles.list1}>
+                    <Image
+                      style={styles.listChild}
+                      contentFit="cover"
+                      source={require("../assets/rectangle-15474.png")}
+                    />
+                    <View style={styles.listInner}>
+                      <View style={styles.buzzCutParent}>
+                        <Text style={styles.buzzCut}>Side part</Text>
+                        <Image
+                          style={styles.frameChild}
+                          contentFit="cover"
+                          source={selectedStyle === "Side part" ? require("../assets/ellipse-2601.png") : require("../assets/ellipse-260.png")}
+                        />
+                        <View style={[styles.locatoin, styles.boldLayout1]} />
+                      </View>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => handleStyleSelection("Buzz cut")}>
+                  <View style={styles.list1}>
+                    <Image
+                      style={styles.listChild}
+                      contentFit="cover"
+                      source={require("../assets/rectangle-1547.png")}
+                    />
+                    <View style={styles.listInner}>
+                      <View style={styles.buzzCutParent}>
+                        <Text style={styles.buzzCut}>Buzz cut</Text>
+                        <Image
+                          style={styles.frameChild}
+                          contentFit="cover"
+                          source={selectedStyle === "Buzz cut" ? require("../assets/ellipse-2601.png") : require("../assets/ellipse-260.png")}
+                        />
+                        <View style={[styles.locatoin, styles.boldLayout1]} />
+                      </View>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => handleStyleSelection("Comb back")}>
+                  <View style={styles.list1}>
+                    <Image
+                      style={styles.listChild}
+                      contentFit="cover"
+                      source={require("../assets/slickback.png")}
+                    />
+                    <View style={styles.combBackParent}>
+                      <Text style={styles.buzzCut}>Comb back</Text>
+                      <Image
+                        style={styles.frameChild}
+                        contentFit="cover"
+                        source={selectedStyle === "Comb back" ? require("../assets/ellipse-2601.png") : require("../assets/ellipse-260.png")}
+                      />
+                      <View style={[styles.locatoin, styles.boldLayout1]} />
+                    </View>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => handleStyleSelection("Crew cut")}>
+                  <View style={styles.list1}>
+                    <Image
+                      style={styles.listChild}
+                      contentFit="cover"
+                      source={require("../assets/rectangle-15471.png")}
+                    />
+                    <View style={styles.listInner}>
+                      <View style={styles.buzzCutParent}>
+                        <Text style={styles.buzzCut}>Crew cut</Text>
+                        <Image
+                          style={styles.frameChild}
+                          contentFit="cover"
+                          source={selectedStyle === "Crew cut" ? require("../assets/ellipse-2601.png") : require("../assets/ellipse-260.png")}
+                        />
+                        <View style={[styles.locatoin, styles.boldLayout1]} />
+                      </View>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+                {/* Add other styles similarly */}
                 <Text style={[styles.volume, styles.styleTypo]}>Volume:</Text>
                 <View style={styles.sliderFilter}>
                   <View style={styles.listOption}>
-                    <View style={styles.tag5} />
-                    <View style={[styles.tag6, styles.tagFlexBox]}>
-                      <Text style={[styles.thick, styles.thickTypo]}>Thick</Text>
-                    </View>
-                    <View style={[styles.tag1, styles.tagFlexBox]}>
-                      <Text style={styles.thin}>Thin</Text>
-                    </View>
+                  <TouchableOpacity onPress={() => handleVolumeSelection("Thick")}>
+                        <View style={selectedVolume === "Thick" ? styles.tag6 : styles.tag5}>
+                          <Text style={[styles.thick, selectedVolume === "Thick" ? styles.selectedVolumeText : styles.thickTypo]}>Thick</Text>
+                        </View>
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => handleVolumeSelection("Thin")}>
+                        <View style={selectedVolume === "Thin" ? styles.tag6 : styles.tag5}>
+                          <Text style={[styles.thin, selectedVolume === "Thin" ? styles.selectedVolumeText : styles.thinTypo]}>Thin</Text>
+                        </View>
+                      </TouchableOpacity>
                     <TouchableHighlight
                       style={styles.buttonbig}
                       underlayColor="#fff"
                       activeOpacity={0.2}
-                      onPress={() => navigation.navigate("TrimAddOns")}
+                      onPress={handleProceed}
                     >
                       <Text style={[styles.label, styles.labelTypo]}>Proceed</Text>
                     </TouchableHighlight>
+                    {warning ? (
+                      <Text style={styles.warningText}>{warning}</Text>
+                    ) : null}
                   </View>
                 </View>
               </View>
@@ -240,7 +283,7 @@ const TopHairPage = () => {
                 <View style={[styles.view, styles.viewFlexBox]}>
                   <View style={[styles.label1, styles.viewFlexBox1]}>
                     <Pressable
-                      style={styles.boldLayout}
+                      style={[styles.boldLayout, { marginTop: 50 }]}
                       onPress={() => navigation.navigate("MainLoadingPage")}
                     >
                       <Image
@@ -249,7 +292,7 @@ const TopHairPage = () => {
                         source={require("../assets/linear--arrows--arrow-left.png")}
                       />
                     </Pressable>
-                    <Text style={[styles.label2, styles.label2Typo]}>Back</Text>
+                    <Text style={[styles.label2, styles.label2Typo, { marginTop: 50 }]}>Back</Text>
                   </View>
                   <View style={styles.statusBarFlexBox}>
                     <Image
@@ -274,9 +317,20 @@ const TopHairPage = () => {
 };
 
 const styles = StyleSheet.create({
+  warningText: {
+    color: "red",
+    marginTop: 20,
+    textAlign: "center",
+  },  
+  container: {
+    flex: 1,
+  },
   topBg: {
     backgroundColor: Color.colorWhite900,
     width: 375,
+  },
+  scrollContent: {
+    flexGrow: 1,
   },
   buttonSpaceBlock: {
     paddingVertical: Padding.p_xs,
@@ -471,7 +525,7 @@ const styles = StyleSheet.create({
   },
   style: {
     width: 317,
-    height: 22,
+    height: 27,
   },
   listChild: {
     height: 100,
@@ -562,6 +616,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     width: 339,
     flexDirection: "row",
+    marginBottom: 20, // Added margin bottom for spacing
   },
   content: {
     marginTop: -652.5,
@@ -722,6 +777,12 @@ const styles = StyleSheet.create({
     width: "100%",
     flex: 1,
   },
+  selectedVolumeText: {
+    color: "#000",
+  },
+  thinTypo: {
+    color: "#000",
+  }
 });
 
 export default TopHairPage;
