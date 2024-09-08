@@ -20,3 +20,7 @@
 #### Stylist Selection Screen: List of available stylists with their ratings and reviews.
 #### Confirmation Screen: Booking details and confirmation with options to make payment and print receipt.
 #### Payment Screen: Summary of selected services and total cost with payment options.
+
+## App Demo
+#### App Overview: https://drive.google.com/file/d/1iL_TetknhfNNPxuXekH9MeRkGj5ztUnY/view?usp=sharing
+#### User app interaction: https://drive.google.com/file/d/1rjgZpbHOnpORd8x4wumS4QBY1La5Aa8D/view?usp=sharing
